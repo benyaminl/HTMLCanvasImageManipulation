@@ -1,24 +1,28 @@
 <html>
-<head><title>Simulasi Gambar</title>
-<script src="jquery-1.12.4.js"></script>
-<script src="main.js"></script>
-<link rel="stylesheet" type="text/css" href="main.css">
+<head>
+    <title></title>
+    <script src="jquery.js"></script>
+    <link rel="stylesheet"  type="text/css" href="main.css">
 </head>
 <body>
-	<div class="test">Me</div>
-	<button class="tog">Toggle</button><br/>
-	
-	<img class="rawdata" src="sim.png">
-	<!-- Rolback If Don't Support HTML5 -->
-	<canvas id="mycanvas">This browser don't support HTML5</canvas><br/>
-	<ul class="colorset">
-		<li class="child" r="10" g="50" b="80"><button>11111</button></li>
-		<li class="child" r="200" g="250" b="100"><button>22222</button></li>
-		<li class="child" r="30" g="150" b="130"><button>33333</button></li>
-		<li class="child" r="40" g="140" b="160"><button>44444</button></li>
-		<li class="child" r="200" g="100" b="250"><button>55555</button></li>
-	</ul><br/>
-	<p class="hasil"></p>
-	<p class="hasil2"></p>
+    <div class="listTiles">
+        <ul class="listg">
+            <li><img src="1.png" class="gambarpil"></li>
+            <li><img src="2.png" class="gambarpil"></li>
+            <li><img src="3.png" class="gambarpil"></li>
+            <li><img src="4.png" class="gambarpil"></li>
+            <li><img src="5.png" class="gambarpil"></li>
+            <li><img src="6.png" class="gambarpil"></li>
+            <li><img src="7.png" class="gambarpil"></li>
+            <li><img src="8.png" class="gambarpil"></li>
+        </ul>
+    </div>
+    <div class="tempatGambar">
+        <canvas id="that"></canvas>
+        <img src="6.png" class="gambar">
+        <input type="color" id="cpik">
+        <button class="clear">Clear</button>
+    </div>
+    <script src="main.js"></script>
 </body>
 </html>
