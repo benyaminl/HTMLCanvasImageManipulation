@@ -1,13 +1,37 @@
-.test {
-	background-color: #000;
-	color: #fff
+.gambar {
+    display:none;
 }
 
-.colorset .child{
-	display: inline-block;
-	padding: 20px;
+/*
+    Tiles Samping : Start
+*/
+
+.listTiles {
+    height: 400px;
+    float: left;
+    overflow-y: scroll;
 }
 
-.colorset {
-	list-style-type: none;
+.listg{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.listg li{
+    display: block;
+    margin: 10px;
+}
+
+.listg li img{
+    width: 100px;
+    height: 100px;
+}
+/*
+    Tiles Samping : End
+*/
+
+.tempatGambar{
+    float: left;
+    margin: 10px;
 }
