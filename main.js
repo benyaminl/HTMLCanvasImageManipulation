@@ -2,7 +2,7 @@ $(function(){
     var canvas = $("#that").get(0);
     var rpil,gpil,bpil,btsR,btsG,btsG;
     rpil = 0; gpil = 0; bpil = 0;
-    btsR = 144; btsG = 145; btsB = 131;
+    btsR = 20; btsG = 20; btsB = 20;
     var xget, yget, cCo, iData, sr, sg, sb;
     //Code Based on http://www.javascripter.net/faq/hextorgb.htm
     function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
