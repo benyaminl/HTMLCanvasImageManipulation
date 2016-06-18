@@ -2,6 +2,7 @@
 <head>
     <title></title>
     <script src="jquery.js"></script>
+    <script src="main.js"></script>
     <link rel="stylesheet"  type="text/css" href="main.css">
 </head>
 <body>
@@ -21,8 +22,17 @@
         <canvas id="that"></canvas>
         <img src="6.png" class="gambar">
         <input type="color" id="cpik">
-        <button class="clear">Clear</button>
+        <button class="clear">Clear</button><br>
+        <div class="hidden">
+            <canvas id="temp"></canvas>
+            <canvas id="trap"></canvas>
+            <canvas id="hsim" width="500" height="300"></canvas>
+        </div>
+        <button id="sim">Simulate</button>
     </div>
-    <script src="main.js"></script>
+    <div class="ruangan">
+        <img src="r1.png" id="coba1" width="50" height="30">
+        <img src="r2.png" id="coba2" width="50" height="30">
+    </div>
 </body>
 </html>

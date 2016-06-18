@@ -2,7 +2,7 @@ $(function(){
     var canvas = $("#that").get(0);
     var rpil,gpil,bpil,btsR,btsG,btsG;
     rpil = 0; gpil = 0; bpil = 0;
-    btsR = 20; btsG = 20; btsB = 20;
+    btsR = 144; btsG = 145; btsB = 131;
     var xget, yget, cCo, iData, sr, sg, sb;
     //Code Based on http://www.javascripter.net/faq/hextorgb.htm
     function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
@@ -185,4 +185,105 @@ $(function(){
             console.log("Gagal");
         }*/
     }
+    /*
+        Created by Ken Fyrstenberg Nilsen / Epistemex.com
+        License: CC3.0-Attr.
+    */
+    function drawTrapezoid(ctx, img, x, y, w, h, factor) {
+        var startPoint = x + w * 0.5 * (factor*0.01),
+            xi, yi, scale = img.height / h,
+            startLine = y,
+            endLine = y + h;
+
+        for(; y < endLine; y++) {
+            
+            xi = interpolate(startPoint, x, (y - startLine) / h);
+            yi = (y * scale + 0.5)|0;
+            ctx.drawImage(img, 0, yi, img.width, 1, xi, y, w - xi * 2, 1);
+        }
+        
+        function interpolate(x1, x2, t) {
+            return x1 + (x2 - x1) * t;
+        }
+    }
+
+    
+    /*
+        Start With the Simulation of Room
+        16 May 2016
+    */
+    
+    $("#sim").click(function(){
+        $("#temp").attr({"width" : 500,
+        "height" : 300});
+        var tcanvas = $("#temp").get(0);
+        var tctx = tcanvas.getContext("2d");
+        //Simulate from Up Tiles - Dari atas dilihatnya
+        for(var i = 1; i<=11; i++){//Untuk Kolom
+            for(var j = 1; j<=9; j++){//Baris
+                tctx.drawImage(canvas,((i-1)*50),((j-1)*50),50,50);
+            }   
+        }
+        //make it trapezoid
+        $("#trap").attr({"width" : 500,
+        "height" : 300});
+        var tsrc = $("#trap").get(0);
+        var trapctx = tsrc.getContext("2d");
+        trapctx.transform(1,0,0.25,1,0,0);
+        drawTrapezoid(trapctx,tcanvas,0,0,500,300,60);
+        //Diambil taruh di hasil simulasi
+        var hsim = $("#hsim").get(0);
+        var hctx = hsim.getContext("2d");
+        hctx.clearRect(0, 0, hsim.width, hsim.height);
+        hctx.drawImage(tsrc,-200,140,800,160);
+        var tambahan = $("#coba1").get(0);
+        hctx.drawImage(tambahan,0,0,500,300);
+        //Export to IMG biasa karena biasa blank ga jelas...
+        var dataurl = hsim.toDataURL();
+        $("#himg").attr({"src":dataurl,
+                        "width":500,
+                        "height":300});
+    });
+    
+    $("#skew").click(function(){
+        var trapctx = $("#trap").get(0).getContext("2d");
+        var tcanvas = $("#temp").get(0);
+        var tctx = tcanvas.getContext("2d");
+        trapctx.clearRect(0, 0, canvas.width, canvas.height);
+        trapctx.transform(1,0,0.1,1,0,0);
+        drawTrapezoid(trapctx,tcanvas,0,0,500,300,60);
+    });
+    
+    $("#coba2").click(function(){
+        $("#temp").attr({"width" : 500,
+        "height" : 300});
+        var tcanvas = $("#temp").get(0);
+        var tctx = tcanvas.getContext("2d");
+        //Simulate from Up Tiles - Dari atas dilihatnya
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=9; j++){//Baris
+                tctx.drawImage(canvas,((i-1)*70),((j-1)*40),70,40);
+            }   
+        }
+        //make it trapezoid
+        $("#trap").attr({"width" : 500,
+        "height" : 300});
+        var tsrc = $("#trap").get(0);
+        var trapctx = tsrc.getContext("2d");
+        trapctx.transform(1,0,1,1,-190,30);
+        trapctx.rotate((-18)*Math.PI/180);
+        trapctx.drawImage(tcanvas,0,0,500,300);
+        //Diambil taruh di hasil simulasi
+        var hsim = $("#hsim").get(0);
+        var hctx = hsim.getContext("2d");
+        hctx.clearRect(0, 0, hsim.width, hsim.height);
+        hctx.drawImage(tsrc,-150,160,950,180);
+        var tambahan = $(this).get(0);
+        hctx.drawImage(tambahan,0,0,500,300);
+        //Export to IMG biasa karena biasa blank ga jelas...
+        var dataurl = hsim.toDataURL();
+        $("#himg").attr({"src":dataurl,
+                        "width":500,
+                        "height":300});
+    });
 });
