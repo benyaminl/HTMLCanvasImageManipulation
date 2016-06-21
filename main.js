@@ -261,7 +261,7 @@ $(function(){
         var tctx = tcanvas.getContext("2d");
         //Simulate from Up Tiles - Dari atas dilihatnya
         for(var i = 1; i<=20; i++){//Untuk Kolom
-            for(var j = 1; j<=9; j++){//Baris
+            for(var j = 1; j<=20; j++){//Baris
                 tctx.drawImage(canvas,((i-1)*70),((j-1)*40),70,40);
             }   
         }
@@ -270,14 +270,48 @@ $(function(){
         "height" : 300});
         var tsrc = $("#trap").get(0);
         var trapctx = tsrc.getContext("2d");
-        trapctx.transform(1,0,1,1,-190,30);
+        trapctx.transform(1,0,0.6,1,-230,30);
         trapctx.rotate((-18)*Math.PI/180);
-        trapctx.drawImage(tcanvas,0,0,500,300);
+        trapctx.transform(1,0.2,1.1,1,0,0);
+        //trapctx.rotate((-18)*Math.PI/180);
+        trapctx.drawImage(tcanvas,-20,50,550,340);
         //Diambil taruh di hasil simulasi
         var hsim = $("#hsim").get(0);
         var hctx = hsim.getContext("2d");
         hctx.clearRect(0, 0, hsim.width, hsim.height);
-        hctx.drawImage(tsrc,-150,160,950,180);
+        hctx.drawImage(tsrc,0,160,510,210);
+        var tambahan = $(this).get(0);
+        hctx.drawImage(tambahan,0,0,500,300);
+        //Export to IMG biasa karena biasa blank ga jelas...
+        var dataurl = hsim.toDataURL();
+        $("#himg").attr({"src":dataurl,
+                        "width":500,
+                        "height":300});
+    });
+
+    $("#coba3").click(function (e) { 
+        $("#temp").attr({"width" : 500,
+        "height" : 300});
+        var tcanvas = $("#temp").get(0);
+        var tctx = tcanvas.getContext("2d");
+        //Simulate from Up Tiles - Dari atas dilihatnya
+        for(var i = 1; i<=11; i++){//Untuk Kolom
+            for(var j = 1; j<=9; j++){//Baris
+                tctx.drawImage(canvas,((i-1)*50),((j-1)*50),50,50);
+            }   
+        }
+        //make it trapezoid
+        $("#trap").attr({"width" : 500,
+        "height" : 300});
+        var tsrc = $("#trap").get(0);
+        var trapctx = tsrc.getContext("2d");
+        trapctx.transform(1,0,0.1,1,0,0);
+        drawTrapezoid(trapctx,tcanvas,0,0,500,300,60);
+        //Diambil taruh di hasil simulasi
+        var hsim = $("#hsim").get(0);
+        var hctx = hsim.getContext("2d");
+        hctx.clearRect(0, 0, hsim.width, hsim.height);
+        hctx.drawImage(tsrc,-100,140,800,160);
         var tambahan = $(this).get(0);
         hctx.drawImage(tambahan,0,0,500,300);
         //Export to IMG biasa karena biasa blank ga jelas...
