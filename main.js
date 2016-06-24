@@ -2,7 +2,7 @@ $(function(){
     var canvas = $("#that").get(0);
     var rpil,gpil,bpil,btsR,btsG,btsG;
     rpil = 0; gpil = 0; bpil = 0;
-    btsR = 20; btsG = 20; btsB = 20;
+    btsR = 144; btsG = 145; btsB = 131;
     var xget, yget, cCo, iData, sr, sg, sb;
     //Code Based on http://www.javascripter.net/faq/hextorgb.htm
     function hexToR(h) {return parseInt((cutHex(h)).substring(0,2),16)}
@@ -44,49 +44,7 @@ $(function(){
         console.log($(this).attr("src"));
         $(".gambar").attr("src",$(this).attr("src"));
     });
-    
-    /*  Rekursive 2016 HTML Color Picker
-        Benyamin Limanto
-        Code works well when it's on somepart canvas that's not too big anyway
-    */
-    function bucketFloodFill(x,y){
-        posData = ((x-1)*4) + ((4*canvas.width)*(y-1));
-        iData.data[posData] = rpil;
-        iData.data[posData+1] = gpil;
-        iData.data[posData+2] = bpil;
-        //Atas
-        posData = ((x-1)*4) + ((4*canvas.width)*(y-2));
-        r = iData.data[posData]; //Red
-        g = iData.data[posData+1]; //Green
-        b = iData.data[posData+2]; //Blue
-        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
-            bucketFloodFill(x,y-1);
-        }
-        //Bawah
-        posData = ((x-1)*4) + ((4*canvas.width)*y);
-        r = iData.data[posData]; //Red
-        g = iData.data[posData+1]; //Green
-        b = iData.data[posData+2]; //Blue
-        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
-            bucketFloodFill(x,y+1);
-        }
-        //Kiri
-        posData = ((x-2)*4) + ((4*canvas.width)*(y-1));
-        r = iData.data[posData]; //Red
-        g = iData.data[posData+1]; //Green
-        b = iData.data[posData+2]; //Blue
-        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
-            bucketFloodFill(x-1,y);
-        }
-        //Kanan
-        posData = (x*4) + ((4*canvas.width)*(y-1));
-        r = iData.data[posData]; //Red
-        g = iData.data[posData+1]; //Green
-        b = iData.data[posData+2]; //Blue
-        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
-            bucketFloodFill(x+1,y);
-        }
-    }
+
     /* A Code from http://www.williammalone.com/articles/html5-canvas-javascript-paint-bucket-tool/
         Since my code works well but this's suck that JS doesn't support recursion too much because of this
         Reffering to this.. http://programmers.stackexchange.com/questions/179863/performance-recursion-vs-iteration-in-javascript
@@ -166,23 +124,272 @@ $(function(){
         }
         cCo.putImageData(iData, 0, 0);
     }
+
     /*
         end of William Malone Code. Licensed with MIT Licensed.
         I still consider to port my recursion to iteration in meanwhile
     */
+
     function getPickColor(startX,startY){
         iData = cCo.getImageData(startX,startY,1,1);
         //Cek apakah hitam tidak di awal, mengurangi percabangan
-        if (iData.data[0] > btsR || iData.data[1] > btsG || iData.data[2] > btsB){
+        if (
+            (iData.data[0] != btsR || iData.data[1] != btsG || iData.data[2] != btsB) && //apakah adalah garis
+            (iData.data[0] != rpil || iData.data[1] != gpil || iData.data[2] != bpil)//untuk mengecek apakah sama warnanya
+        ){
             sr = iData.data[0]; sg = iData.data[1]; sb = iData.data[2];
             iData = cCo.getImageData(0,0,canvas.width, canvas.height);
             wmBucket(startX,startY);
         }
-            /*bucketFloodFill(startX,startY);
-            cCo.putImageData(iData,0,0);
-        }*//*
         else{
-            console.log("Gagal");
-        }*/
+            console.log("Warna Garis sama atau terisi warna yang sama - Menghindari Overload pada Browser memory, menyebabkan crash");
+        }
     }
+
+    /*
+        Created by Ken Fyrstenberg Nilsen / Epistemex.com
+        License: CC3.0-Attr.
+    */
+    function drawTrapezoid(ctx, img, x, y, w, h, factor) {
+        var startPoint = x + w * 0.5 * (factor*0.01),
+            xi, yi, scale = img.height / h,
+            startLine = y,
+            endLine = y + h;
+
+        for(; y < endLine; y++) {
+            
+            xi = interpolate(startPoint, x, (y - startLine) / h);
+            yi = (y * scale + 0.5)|0;
+            ctx.drawImage(img, 0, yi, img.width, 1, xi, y, w - xi * 2, 1);
+        }
+        
+        function interpolate(x1, x2, t) {
+            return x1 + (x2 - x1) * t;
+        }
+    }
+    /*
+        Start With the Simulation of Room
+        16 May 2016
+    */
+    
+    function showhasil(URI){
+        var img = $("<img>").attr("src",URI);
+        var div1 = $("<div></div>").addClass("hasilsim");
+        var close = $("<a >").attr("href","#").text("close").addClass("btn btn-default");
+        var div2 = $("<div></div>").append(close);
+        $(close).click(function (e) { 
+            $(".hasilsim").remove();
+        });
+        div2.append(img);
+        div1.append(div2);
+        $("body").append(div1);
+    }
+    //Living Room 1
+    $("#r1").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*50),((j-1)*55),50,55);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,77);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-110,300,1050,200);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Living Room 2
+    $("#r2").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*40),((j-1)*45),40,45);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,77);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-300,319,1450,180);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    // Kamar Mandi 
+    $("#r3").click(function (e) { 
+         var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*50),((j-1)*50),50,50);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,70);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-150,300,1100,280);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Ruang Makan
+    $("#r4").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*50),((j-1)*50),50,50);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,72);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-200,300,1370,260);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Kamar Tidur
+    $("#r5").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*60),((j-1)*68),60,68);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,62);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-285,340,1480,182);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Entrence Masuk
+    $("#r6").click(function (e) { 
+         var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*60),((j-1)*68),60,68);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,85);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-300,310,1480,190);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Ruang Kerja
+    $("#r7").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*50),((j-1)*55),50,55);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,65);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-450,340,1710,180);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
+
+    //Dapur
+    $("#r8").click(function (e) { 
+        var ruangan = $(this).get(0);//Dapatkan Gambar yang di click
+        var temp = $("#temp").get(0);//Dapatkan Gambar dari #temp
+        var tempctx = temp.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        tempctx.clearRect(0,0,temp.width,temp.height);
+        //Gambarkan canvas seperti kotak koordinat
+        for(var i = 1; i<=20; i++){//Untuk Kolom
+            for(var j = 1; j<=20; j++){//Baris
+                tempctx.drawImage(canvas,((i-1)*50),((j-1)*55),50,55);
+            }   
+        }
+        var trap = $("#trap").get(0);//Dapatkan gambar dari Trap, Tempat Raplika, Replika, Trapresium
+        var trapctx = trap.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        trapctx.clearRect(0,0,trap.width,trap.height);
+        trapctx.setTransform(1,0,0,1,0,0);
+        trapctx.transform(1,-0.1,0.11,1,0,0);
+        drawTrapezoid(trapctx,temp,0,0,800,500,84);//Disimulasikan 1 titik hilang
+        var hsim = $("#hsim").get(0);//Dapatkan Canvas Hasil Simulasi
+        var hctx = hsim.getContext("2d");//Convert ke array 1-d jadi 2 dimensi
+        hctx.clearRect(0,0,hsim.width,hsim.height);//Bersihkan Canvas
+        hctx.drawImage(trap,-300,310,1430,220);
+        hctx.drawImage(ruangan,0,0,800,500);
+        var data = hsim.toDataURL();
+        showhasil(data);
+    });
 });

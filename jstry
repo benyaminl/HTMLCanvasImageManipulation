@@ -1,0 +1,43 @@
+    
+    /*  Rekursive 2016 HTML Color Picker
+        Benyamin Limanto
+        Code works well when it's on somepart canvas that's not too big anyway
+    */
+    function bucketFloodFill(x,y){
+        posData = ((x-1)*4) + ((4*canvas.width)*(y-1));
+        iData.data[posData] = rpil;
+        iData.data[posData+1] = gpil;
+        iData.data[posData+2] = bpil;
+        //Atas
+        posData = ((x-1)*4) + ((4*canvas.width)*(y-2));
+        r = iData.data[posData]; //Red
+        g = iData.data[posData+1]; //Green
+        b = iData.data[posData+2]; //Blue
+        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
+            bucketFloodFill(x,y-1);
+        }
+        //Bawah
+        posData = ((x-1)*4) + ((4*canvas.width)*y);
+        r = iData.data[posData]; //Red
+        g = iData.data[posData+1]; //Green
+        b = iData.data[posData+2]; //Blue
+        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
+            bucketFloodFill(x,y+1);
+        }
+        //Kiri
+        posData = ((x-2)*4) + ((4*canvas.width)*(y-1));
+        r = iData.data[posData]; //Red
+        g = iData.data[posData+1]; //Green
+        b = iData.data[posData+2]; //Blue
+        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
+            bucketFloodFill(x-1,y);
+        }
+        //Kanan
+        posData = (x*4) + ((4*canvas.width)*(y-1));
+        r = iData.data[posData]; //Red
+        g = iData.data[posData+1]; //Green
+        b = iData.data[posData+2]; //Blue
+        if ((r > btsR || g > btsG || b > btsG )&&(r != rpil || g != gpil || b != bpil)){
+            bucketFloodFill(x+1,y);
+        }
+    }

@@ -1,0 +1,11 @@
+<NotepadPlus>
+    <Project name="Simulator">
+        <Folder name=".vscode">
+            <File name=".vscode\settings.json" />
+        </Folder>
+        <File name="index.html" />
+        <File name="jquery.js" />
+        <File name="main.css" />
+        <File name="main.js" />
+    </Project>
+</NotepadPlus>
